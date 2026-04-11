@@ -208,8 +208,9 @@ function UI:CreateWindow(cfg)
 			box.Font = Enum.Font.SourceSansBold
 			box.TextSize = 18
 
+			box.TextWrapped = true
 			box.TextXAlignment = Enum.TextXAlignment.Left
-			box.ClearTextOnFocus = false
+			box.TextYAlignment = Enum.TextYAlignment.Center
 			box.Text = ""
 			box.PlaceholderText = cfg.Name or "Enter here..."
 
@@ -299,6 +300,7 @@ function UI:CreateWindow(cfg)
 
 			bar.InputChanged:Connect(function(input)
 				if not dragging then return end
+
 				if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 					local pos = (input.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X
 					pos = math.clamp(pos, 0, 1)
