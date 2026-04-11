@@ -84,6 +84,9 @@ function UI:CreateWindow(cfg)
 	Title.BorderSizePixel = 0
 	Instance.new("UICorner", Title).CornerRadius = UDim.new(0,5)
 
+	local padding = Instance.new("UIPadding", Title)
+	padding.PaddingLeft = UDim.new(0,7)
+
 	local Close = Instance.new("TextButton", Title)
 	Close.Size = UDim2.new(0,24,0,28)
 	Close.Position = UDim2.new(0,498,0,4)
@@ -195,6 +198,14 @@ function UI:CreateWindow(cfg)
 			frame.BorderSizePixel = 0
 			Instance.new("UICorner", frame)
 
+			local label = Instance.new("TextLabel", frame)
+			label.Size = UDim2.new(1,0,0,20)
+			label.BackgroundTransparency = 1
+			label.Text = cfg.Name .. ": " .. value
+			label.TextColor3 = Color3.fromRGB(255,255,255)
+			label.Font = Enum.Font.SourceSansBold
+			label.TextSize = 18
+
 			local bar = Instance.new("Frame", frame)
 			bar.Size = UDim2.new(1,-10,0,6)
 			bar.Position = UDim2.new(0,5,1,-12)
@@ -205,12 +216,6 @@ function UI:CreateWindow(cfg)
 			fill.Size = UDim2.new(0,0,1,0)
 			fill.BackgroundColor3 = Color3.fromRGB(255,255,255)
 			Instance.new("UICorner", fill)
-
-			local label = Instance.new("TextLabel", frame)
-			label.Size = UDim2.new(1,0,0,20)
-			label.BackgroundTransparency = 1
-			label.Text = cfg.Name .. ": " .. value
-			label.TextColor3 = Color3.fromRGB(255,255,255)
 
 			offsetY += 56
 			updateCanvas(Page)
@@ -236,7 +241,7 @@ function UI:CreateWindow(cfg)
 
 					fill.Size = UDim2.new(pos,0,1,0)
 
-					value = math.floor((cfg.Min or 0) + (cfg.Max or 100 - (cfg.Min or 0)) * pos)
+					value = math.floor((cfg.Min or 0) + ((cfg.Max or 100) - (cfg.Min or 0)) * pos)
 					label.Text = cfg.Name .. ": " .. value
 
 					if cfg.Callback then
@@ -244,52 +249,6 @@ function UI:CreateWindow(cfg)
 					end
 				end
 			end)
-		end
-
-		function Tab:AddColorPicker(cfg)
-			local frame = Instance.new("Frame", Page)
-			frame.Size = UDim2.new(0,398,0,120)
-			frame.Position = UDim2.new(0.5, -199, 0, offsetY)
-			frame.BackgroundColor3 = Color3.fromRGB(70,70,70)
-			frame.BorderSizePixel = 0
-			Instance.new("UICorner", frame)
-
-			local preview = Instance.new("Frame", frame)
-			preview.Size = UDim2.new(0,40,0,40)
-			preview.Position = UDim2.new(0,5,0,5)
-			preview.BackgroundColor3 = Color3.new(1,0,0)
-
-			local r,g,b = 255,0,0
-
-			local function update()
-				local color = Color3.fromRGB(r,g,b)
-				preview.BackgroundColor3 = color
-				if cfg.Callback then
-					cfg.Callback(color)
-				end
-			end
-
-			local function makeSlider(y,name,val,set)
-				local s = Instance.new("TextBox", frame)
-				s.Size = UDim2.new(0,120,0,25)
-				s.Position = UDim2.new(0,50,0,y)
-				s.Text = name..":"..val
-				s.BackgroundColor3 = Color3.fromRGB(100,100,100)
-
-				s.FocusLost:Connect(function()
-					local num = tonumber(s.Text:match("%d+")) or val
-					num = math.clamp(num,0,255)
-					set(num)
-					update()
-				end)
-			end
-
-			makeSlider(5,"R",r,function(v) r=v end)
-			makeSlider(35,"G",g,function(v) g=v end)
-			makeSlider(65,"B",b,function(v) b=v end)
-
-			offsetY += 126
-			updateCanvas(Page)
 		end
 
 		Tab.Page = Page
