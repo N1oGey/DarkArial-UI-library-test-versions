@@ -84,8 +84,8 @@ function UI:CreateWindow(cfg)
 	Title.BorderSizePixel = 0
 	Instance.new("UICorner", Title).CornerRadius = UDim.new(0,5)
 
-	local padding = Instance.new("UIPadding", Title)
-	padding.PaddingLeft = UDim.new(0,7)
+	local pad = Instance.new("UIPadding", Title)
+	pad.PaddingLeft = UDim.new(0,7)
 
 	local Close = Instance.new("TextButton", Title)
 	Close.Size = UDim2.new(0,24,0,28)
@@ -162,6 +162,60 @@ function UI:CreateWindow(cfg)
 			Page.Visible = true
 		end)
 
+		function Tab:AddButton(cfg)
+			local btn = Instance.new("TextButton", Page)
+			btn.Size = UDim2.new(0,398,0,38)
+			btn.Position = UDim2.new(0.5, -199, 0, offsetY)
+			btn.Text = cfg.Name
+			btn.BackgroundColor3 = Color3.fromRGB(133,133,133)
+			btn.TextColor3 = Color3.fromRGB(255,255,255)
+			btn.Font = Enum.Font.SourceSansBold
+			btn.TextSize = 18
+			btn.BorderSizePixel = 0
+			Instance.new("UICorner", btn)
+
+			offsetY += 44
+			updateCanvas(Page)
+
+			btn.MouseButton1Click:Connect(function()
+				if cfg.Callback then cfg.Callback() end
+			end)
+		end
+
+		function Tab:AddLabel(cfg)
+			local lbl = Instance.new("TextLabel", Page)
+			lbl.Size = UDim2.new(0,398,0,34)
+			lbl.Position = UDim2.new(0.5, -199, 0, offsetY)
+			lbl.Text = cfg.Text
+			lbl.BackgroundTransparency = 1
+			lbl.TextColor3 = Color3.fromRGB(200,200,200)
+			lbl.Font = Enum.Font.SourceSansBold
+			lbl.TextSize = 18
+			lbl.TextXAlignment = Enum.TextXAlignment.Left
+
+			offsetY += 38
+			updateCanvas(Page)
+		end
+
+		function Tab:AddBox(cfg)
+			local box = Instance.new("TextBox", Page)
+			box.Size = UDim2.new(0,398,0,40)
+			box.Position = UDim2.new(0.5, -199, 0, offsetY)
+			box.Text = ""
+			box.PlaceholderText = cfg.Name
+			box.BackgroundColor3 = Color3.fromRGB(116,116,116)
+			box.TextColor3 = Color3.fromRGB(255,255,255)
+			box.Font = Enum.Font.SourceSansBold
+			box.TextSize = 18
+			box.BorderSizePixel = 0
+			Instance.new("UICorner", box)
+
+			offsetY += 46
+			updateCanvas(Page)
+
+			return box
+		end
+
 		function Tab:AddToggle(cfg)
 			local state = false
 
@@ -182,9 +236,7 @@ function UI:CreateWindow(cfg)
 			btn.MouseButton1Click:Connect(function()
 				state = not state
 				btn.Text = cfg.Name .. " : " .. (state and "ON" or "OFF")
-				if cfg.Callback then
-					cfg.Callback(state)
-				end
+				if cfg.Callback then cfg.Callback(state) end
 			end)
 		end
 
@@ -239,7 +291,7 @@ function UI:CreateWindow(cfg)
 
 				if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 					local pos = (input.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X
-					pos = math.clamp(pos, 0, 1)
+					pos = math.clamp(pos,0,1)
 
 					fill.Size = UDim2.new(pos,0,1,0)
 
@@ -247,9 +299,7 @@ function UI:CreateWindow(cfg)
 
 					label.Text = cfg.Name .. ": " .. value
 
-					if cfg.Callback then
-						cfg.Callback(value)
-					end
+					if cfg.Callback then cfg.Callback(value) end
 				end
 			end)
 		end
