@@ -223,25 +223,28 @@ function UI:CreateWindow(cfg)
 			local dragging = false
 
 			bar.InputBegan:Connect(function(input)
-				if input.UserInputType == Enum.UserInputType.MouseButton1 then
+				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 					dragging = true
 				end
 			end)
 
-			UIS.InputEnded:Connect(function(input)
-				if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			bar.InputEnded:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 					dragging = false
 				end
 			end)
 
-			UIS.InputChanged:Connect(function(input)
-				if dragging then
+			bar.InputChanged:Connect(function(input)
+				if not dragging then return end
+
+				if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 					local pos = (input.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X
-					pos = math.clamp(pos,0,1)
+					pos = math.clamp(pos, 0, 1)
 
 					fill.Size = UDim2.new(pos,0,1,0)
 
 					value = math.floor((cfg.Min or 0) + ((cfg.Max or 100) - (cfg.Min or 0)) * pos)
+
 					label.Text = cfg.Name .. ": " .. value
 
 					if cfg.Callback then
