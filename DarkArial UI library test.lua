@@ -4,6 +4,7 @@ local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
+
 local gui = Instance.new("ScreenGui")
 gui.Name = "DarkArialUi library"
 gui.Parent = player:WaitForChild("PlayerGui")
@@ -201,14 +202,24 @@ function UI:CreateWindow(cfg)
 			local box = Instance.new("TextBox", Page)
 			box.Size = UDim2.new(0,398,0,40)
 			box.Position = UDim2.new(0.5, -199, 0, offsetY)
-			box.Text = ""
-			box.PlaceholderText = cfg.Name
+
 			box.BackgroundColor3 = Color3.fromRGB(116,116,116)
 			box.TextColor3 = Color3.fromRGB(255,255,255)
 			box.Font = Enum.Font.SourceSansBold
 			box.TextSize = 18
+
+			box.TextXAlignment = Enum.TextXAlignment.Left
+			box.ClearTextOnFocus = false
+			box.Text = ""
+			box.PlaceholderText = cfg.Name or "Enter here..."
+
 			box.BorderSizePixel = 0
-			Instance.new("UICorner", box)
+
+			local corner = Instance.new("UICorner", box)
+			corner.CornerRadius = UDim.new(0,5)
+
+			local pad2 = Instance.new("UIPadding", box)
+			pad2.PaddingLeft = UDim.new(0,6)
 
 			offsetY += 46
 			updateCanvas(Page)
@@ -288,10 +299,9 @@ function UI:CreateWindow(cfg)
 
 			bar.InputChanged:Connect(function(input)
 				if not dragging then return end
-
 				if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 					local pos = (input.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X
-					pos = math.clamp(pos,0,1)
+					pos = math.clamp(pos, 0, 1)
 
 					fill.Size = UDim2.new(pos,0,1,0)
 
