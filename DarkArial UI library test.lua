@@ -70,31 +70,15 @@ local Themes = {
 }
 
 local CurrentTheme = Themes.DefaultTheme
-local ThemeObjects = {}
-
-local function ApplyTheme()
-	for _,v in pairs(ThemeObjects) do
-		local obj = v.Obj
-		local t = v.Type
-
-		if obj then
-			if t == "Main" then obj.BackgroundColor3 = CurrentTheme.Main end
-			if t == "Top" then obj.BackgroundColor3 = CurrentTheme.Top end
-			if t == "Side" then obj.BackgroundColor3 = CurrentTheme.Side end
-			if t == "Element" then obj.BackgroundColor3 = CurrentTheme.Element end
-			if t == "Text" then obj.TextColor3 = CurrentTheme.Text end
-			if t == "SubText" then obj.TextColor3 = CurrentTheme.SubText end
-			if t == "Input" then obj.BackgroundColor3 = CurrentTheme.Input end
-			if t == "Slider" then obj.BackgroundColor3 = CurrentTheme.Slider end
-		end
-	end
-end
 
 function UI:SetTheme(name)
 	if Themes[name] then
 		CurrentTheme = Themes[name]
-		ApplyTheme()
 	end
+end
+
+local function T()
+	return CurrentTheme
 end
 
 -- ================= DRAG =================
@@ -156,18 +140,16 @@ function UI:CreateWindow(cfg)
 	local Wind = Instance.new("Frame", gui)
 	Wind.Size = UDim2.new(0, 536, 0, 320)
 	Wind.Position = UDim2.new(0, 192, 0, 22)
-	Wind.BackgroundColor3 = Themes.DefaultTheme.Main
+	Wind.BackgroundColor3 = T().Main
 	Wind.BorderSizePixel = 0
 	Instance.new("UICorner", Wind).CornerRadius = UDim.new(0,5)
-
-	table.insert(ThemeObjects, {Obj = Wind, Type = "Main"})
 
 	makeDraggable(Wind)
 
 	local Title = Instance.new("TextLabel", Wind)
-	Title.Size = UDim2.new(0,536,0,34)
-	Title.BackgroundColor3 = Themes.DefaultTheme.Top
-	Title.TextColor3 = Themes.DefaultTheme.Text
+	Title.Size = UDim2.new(1,0,0,34)
+	Title.BackgroundColor3 = T().Top
+	Title.TextColor3 = T().Text
 	Title.TextXAlignment = Enum.TextXAlignment.Left
 	Title.Text = cfg.Title or "Title"
 	Title.Font = Enum.Font.SourceSansBold
@@ -175,37 +157,32 @@ function UI:CreateWindow(cfg)
 	Title.BorderSizePixel = 0
 	Instance.new("UICorner", Title).CornerRadius = UDim.new(0,5)
 
-	table.insert(ThemeObjects, {Obj = Title, Type = "Top"})
-	table.insert(ThemeObjects, {Obj = Title, Type = "Text"})
-
 	local pad = Instance.new("UIPadding", Title)
 	pad.PaddingLeft = UDim.new(0,7)
 
 	local Close = Instance.new("TextButton", Title)
 	Close.Size = UDim2.new(0,24,0,28)
-	Close.Position = UDim2.new(0,498,0,4)
+	Close.Position = UDim2.new(1,-30,0,4)
 	Close.Text = "X"
 	Close.BackgroundTransparency = 1
-	Close.TextColor3 = Color3.fromRGB(255,255,255)
+	Close.TextColor3 = T().Text
 	Close.Font = Enum.Font.SourceSansBold
 	Close.TextSize = 24
 
 	local TabsFrame = Instance.new("ScrollingFrame", Wind)
 	TabsFrame.Size = UDim2.new(0,108,0,272)
 	TabsFrame.Position = UDim2.new(0,6,0,40)
-	TabsFrame.BackgroundColor3 = Themes.DefaultTheme.Side
+	TabsFrame.BackgroundColor3 = T().Side
 	TabsFrame.ScrollBarThickness = 0
 	TabsFrame.BorderSizePixel = 0
 	Instance.new("UICorner", TabsFrame).CornerRadius = UDim.new(0,5)
-
-	table.insert(ThemeObjects, {Obj = TabsFrame, Type = "Side"})
 
 	local Open = Instance.new("TextButton", gui)
 	Open.Size = UDim2.new(0,52,0,42)
 	Open.Position = UDim2.new(0,32,0,16)
 	Open.Text = "P"
-	Open.BackgroundColor3 = Themes.DefaultTheme.Side
-	Open.TextColor3 = Color3.fromRGB(255,255,255)
+	Open.BackgroundColor3 = T().Side
+	Open.TextColor3 = T().Text
 	Open.Font = Enum.Font.SourceSansBold
 	Open.TextSize = 24
 	Instance.new("UICorner", Open).CornerRadius = UDim.new(0,5)
@@ -223,6 +200,7 @@ function UI:CreateWindow(cfg)
 		Open.Visible = false
 	end)
 
+	-- ================= TAB =================
 	function Window:AddTab(tabCfg)
 		local Tab = {}
 		local index = #Tabs
@@ -231,28 +209,21 @@ function UI:CreateWindow(cfg)
 		Button.Size = UDim2.new(0,90,0,36)
 		Button.Position = UDim2.new(0.5, -45, 0, index*42 + 6)
 		Button.Text = tabCfg.TabName or "Tab"
-		Button.BackgroundColor3 = Themes.DefaultTheme.Element
-		Button.TextColor3 = Themes.DefaultTheme.Text
+		Button.BackgroundColor3 = T().Element
+		Button.TextColor3 = T().Text
 		Button.Font = Enum.Font.SourceSansBold
 		Button.TextSize = 18
 		Button.BorderSizePixel = 0
-		Instance.new("UICorner", Button).CornerRadius = UDim.new(0,5)
-
-		table.insert(ThemeObjects, {Obj = Button, Type = "Element"})
-		table.insert(ThemeObjects, {Obj = Button, Type = "Text"})
-
-		updateCanvas(TabsFrame)
+		Instance.new("UICorner", Button)
 
 		local Page = Instance.new("ScrollingFrame", Wind)
 		Page.Size = UDim2.new(0,410,0,272)
 		Page.Position = UDim2.new(0,120,0,40)
-		Page.BackgroundColor3 = Themes.DefaultTheme.Side
+		Page.BackgroundColor3 = T().Side
 		Page.ScrollBarThickness = 0
 		Page.BorderSizePixel = 0
 		Page.Visible = false
-		Instance.new("UICorner", Page).CornerRadius = UDim.new(0,5)
-
-		table.insert(ThemeObjects, {Obj = Page, Type = "Side"})
+		Instance.new("UICorner", Page)
 
 		local offsetY = 6
 
@@ -269,15 +240,11 @@ function UI:CreateWindow(cfg)
 			btn.Size = UDim2.new(0,398,0,38)
 			btn.Position = UDim2.new(0.5, -199, 0, offsetY)
 			btn.Text = cfg.Name
-			btn.BackgroundColor3 = Themes.DefaultTheme.Element
-			btn.TextColor3 = Themes.DefaultTheme.Text
+			btn.BackgroundColor3 = T().Element
+			btn.TextColor3 = T().Text
 			btn.Font = Enum.Font.SourceSansBold
 			btn.TextSize = 18
-			btn.BorderSizePixel = 0
 			Instance.new("UICorner", btn)
-
-			table.insert(ThemeObjects, {Obj = btn, Type = "Element"})
-			table.insert(ThemeObjects, {Obj = btn, Type = "Text"})
 
 			offsetY += 44
 			updateCanvas(Page)
@@ -294,12 +261,10 @@ function UI:CreateWindow(cfg)
 			lbl.Position = UDim2.new(0.5, -199, 0, offsetY)
 			lbl.Text = cfg.Text
 			lbl.BackgroundTransparency = 1
-			lbl.TextColor3 = Themes.DefaultTheme.SubText
+			lbl.TextColor3 = T().SubText
 			lbl.Font = Enum.Font.SourceSansBold
 			lbl.TextSize = 18
 			lbl.TextXAlignment = Enum.TextXAlignment.Left
-
-			table.insert(ThemeObjects, {Obj = lbl, Type = "SubText"})
 
 			offsetY += 38
 			updateCanvas(Page)
@@ -311,18 +276,14 @@ function UI:CreateWindow(cfg)
 			box.Size = UDim2.new(0,398,0,40)
 			box.Position = UDim2.new(0.5, -199, 0, offsetY)
 
-			box.BackgroundColor3 = Themes.DefaultTheme.Input
-			box.TextColor3 = Themes.DefaultTheme.Text
-			box.Font = Enum.Font.SourceSansBold
-			box.TextSize = 18
+			box.BackgroundColor3 = T().Input
+			box.TextColor3 = T().Text
 			box.Text = ""
 			box.PlaceholderText = cfg.Name or "Enter here..."
-			box.BorderSizePixel = 0
+			box.Font = Enum.Font.SourceSansBold
+			box.TextSize = 18
 
 			Instance.new("UICorner", box)
-
-			table.insert(ThemeObjects, {Obj = box, Type = "Input"})
-			table.insert(ThemeObjects, {Obj = box, Type = "Text"})
 
 			offsetY += 46
 			updateCanvas(Page)
@@ -338,15 +299,11 @@ function UI:CreateWindow(cfg)
 			btn.Size = UDim2.new(0,398,0,38)
 			btn.Position = UDim2.new(0.5, -199, 0, offsetY)
 			btn.Text = cfg.Name .. " : OFF"
-			btn.BackgroundColor3 = Themes.DefaultTheme.Element
-			btn.TextColor3 = Themes.DefaultTheme.Text
+			btn.BackgroundColor3 = T().Element
+			btn.TextColor3 = T().Text
 			btn.Font = Enum.Font.SourceSansBold
 			btn.TextSize = 18
-			btn.BorderSizePixel = 0
 			Instance.new("UICorner", btn)
-
-			table.insert(ThemeObjects, {Obj = btn, Type = "Element"})
-			table.insert(ThemeObjects, {Obj = btn, Type = "Text"})
 
 			offsetY += 44
 			updateCanvas(Page)
@@ -365,26 +322,21 @@ function UI:CreateWindow(cfg)
 			local frame = Instance.new("Frame", Page)
 			frame.Size = UDim2.new(0,398,0,50)
 			frame.Position = UDim2.new(0.5, -199, 0, offsetY)
-			frame.BackgroundColor3 = Themes.DefaultTheme.Slider
+			frame.BackgroundColor3 = T().Slider
 			frame.BorderSizePixel = 0
 			Instance.new("UICorner", frame)
 
-			table.insert(ThemeObjects, {Obj = frame, Type = "Slider"})
-
 			local label = Instance.new("TextLabel", frame)
 			label.Size = UDim2.new(1,0,0,20)
-			label.BackgroundTransparency = 1
 			label.Text = cfg.Name .. ": " .. value
-			label.TextColor3 = Themes.DefaultTheme.Text
+			label.BackgroundTransparency = 1
+			label.TextColor3 = T().Text
 			label.Font = Enum.Font.SourceSansBold
 			label.TextSize = 18
-
-			table.insert(ThemeObjects, {Obj = label, Type = "Text"})
 
 			local bar = Instance.new("Frame", frame)
 			bar.Size = UDim2.new(1,-10,0,6)
 			bar.Position = UDim2.new(0,5,1,-12)
-			bar.BackgroundColor3 = Color3.fromRGB(100,100,100)
 			Instance.new("UICorner", bar)
 
 			local fill = Instance.new("Frame", bar)
@@ -417,7 +369,6 @@ function UI:CreateWindow(cfg)
 			end)
 		end
 
-		Tab.Page = Page
 		table.insert(Tabs, Tab)
 
 		if #Tabs == 1 then
@@ -426,8 +377,6 @@ function UI:CreateWindow(cfg)
 
 		return Tab
 	end
-
-	ApplyTheme()
 
 	return Window
 end
