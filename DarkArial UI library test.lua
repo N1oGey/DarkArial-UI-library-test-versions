@@ -71,14 +71,40 @@ local Themes = {
 
 local CurrentTheme = Themes.DefaultTheme
 
-function UI:SetTheme(name)
-	if Themes[name] then
-		CurrentTheme = Themes[name]
+local function GetTheme()
+	return CurrentTheme
+end
+
+-- ================= THEME APPLY FIX =================
+local function ApplyTheme()
+	for _,obj in ipairs(gui:GetDescendants()) do
+		if obj:IsA("Frame") then
+			if obj.BackgroundTransparency < 1 then
+				obj.BackgroundColor3 = GetTheme().Side
+			end
+		end
+
+		if obj:IsA("TextButton") then
+			obj.BackgroundColor3 = GetTheme().Element
+			obj.TextColor3 = GetTheme().Text
+		end
+
+		if obj:IsA("TextLabel") then
+			obj.TextColor3 = GetTheme().Text
+		end
+
+		if obj:IsA("TextBox") then
+			obj.BackgroundColor3 = GetTheme().Input
+			obj.TextColor3 = GetTheme().Text
+		end
 	end
 end
 
-local function T()
-	return CurrentTheme
+function UI:SetTheme(name)
+	if Themes[name] then
+		CurrentTheme = Themes[name]
+		ApplyTheme()
+	end
 end
 
 -- ================= DRAG =================
@@ -140,52 +166,41 @@ function UI:CreateWindow(cfg)
 	local Wind = Instance.new("Frame", gui)
 	Wind.Size = UDim2.new(0, 536, 0, 320)
 	Wind.Position = UDim2.new(0, 192, 0, 22)
-	Wind.BackgroundColor3 = T().Main
+	Wind.BackgroundColor3 = GetTheme().Main
 	Wind.BorderSizePixel = 0
-	Instance.new("UICorner", Wind).CornerRadius = UDim.new(0,5)
+	Instance.new("UICorner", Wind)
 
 	makeDraggable(Wind)
 
 	local Title = Instance.new("TextLabel", Wind)
 	Title.Size = UDim2.new(1,0,0,34)
-	Title.BackgroundColor3 = T().Top
-	Title.TextColor3 = T().Text
-	Title.TextXAlignment = Enum.TextXAlignment.Left
+	Title.BackgroundColor3 = GetTheme().Top
+	Title.TextColor3 = GetTheme().Text
 	Title.Text = cfg.Title or "Title"
 	Title.Font = Enum.Font.SourceSansBold
 	Title.TextSize = 18
-	Title.BorderSizePixel = 0
-	Instance.new("UICorner", Title).CornerRadius = UDim.new(0,5)
-
-	local pad = Instance.new("UIPadding", Title)
-	pad.PaddingLeft = UDim.new(0,7)
+	Instance.new("UICorner", Title)
 
 	local Close = Instance.new("TextButton", Title)
-	Close.Size = UDim2.new(0,24,0,28)
-	Close.Position = UDim2.new(1,-30,0,4)
+	Close.Size = UDim2.new(0,24,0,24)
+	Close.Position = UDim2.new(1,-30,0,5)
 	Close.Text = "X"
 	Close.BackgroundTransparency = 1
-	Close.TextColor3 = T().Text
-	Close.Font = Enum.Font.SourceSansBold
-	Close.TextSize = 24
+	Close.TextColor3 = GetTheme().Text
 
 	local TabsFrame = Instance.new("ScrollingFrame", Wind)
 	TabsFrame.Size = UDim2.new(0,108,0,272)
 	TabsFrame.Position = UDim2.new(0,6,0,40)
-	TabsFrame.BackgroundColor3 = T().Side
+	TabsFrame.BackgroundColor3 = GetTheme().Side
 	TabsFrame.ScrollBarThickness = 0
-	TabsFrame.BorderSizePixel = 0
-	Instance.new("UICorner", TabsFrame).CornerRadius = UDim.new(0,5)
+	Instance.new("UICorner", TabsFrame)
 
 	local Open = Instance.new("TextButton", gui)
 	Open.Size = UDim2.new(0,52,0,42)
 	Open.Position = UDim2.new(0,32,0,16)
 	Open.Text = "P"
-	Open.BackgroundColor3 = T().Side
-	Open.TextColor3 = T().Text
-	Open.Font = Enum.Font.SourceSansBold
-	Open.TextSize = 24
-	Instance.new("UICorner", Open).CornerRadius = UDim.new(0,5)
+	Open.BackgroundColor3 = GetTheme().Side
+	Open.TextColor3 = GetTheme().Text
 
 	makeDraggable(Open)
 	Open.Visible = false
@@ -209,21 +224,16 @@ function UI:CreateWindow(cfg)
 		Button.Size = UDim2.new(0,90,0,36)
 		Button.Position = UDim2.new(0.5, -45, 0, index*42 + 6)
 		Button.Text = tabCfg.TabName or "Tab"
-		Button.BackgroundColor3 = T().Element
-		Button.TextColor3 = T().Text
-		Button.Font = Enum.Font.SourceSansBold
-		Button.TextSize = 18
-		Button.BorderSizePixel = 0
+		Button.BackgroundColor3 = GetTheme().Element
+		Button.TextColor3 = GetTheme().Text
+
 		Instance.new("UICorner", Button)
 
 		local Page = Instance.new("ScrollingFrame", Wind)
 		Page.Size = UDim2.new(0,410,0,272)
 		Page.Position = UDim2.new(0,120,0,40)
-		Page.BackgroundColor3 = T().Side
-		Page.ScrollBarThickness = 0
-		Page.BorderSizePixel = 0
+		Page.BackgroundColor3 = GetTheme().Side
 		Page.Visible = false
-		Instance.new("UICorner", Page)
 
 		local offsetY = 6
 
@@ -240,11 +250,8 @@ function UI:CreateWindow(cfg)
 			btn.Size = UDim2.new(0,398,0,38)
 			btn.Position = UDim2.new(0.5, -199, 0, offsetY)
 			btn.Text = cfg.Name
-			btn.BackgroundColor3 = T().Element
-			btn.TextColor3 = T().Text
-			btn.Font = Enum.Font.SourceSansBold
-			btn.TextSize = 18
-			Instance.new("UICorner", btn)
+			btn.BackgroundColor3 = GetTheme().Element
+			btn.TextColor3 = GetTheme().Text
 
 			offsetY += 44
 			updateCanvas(Page)
@@ -261,13 +268,9 @@ function UI:CreateWindow(cfg)
 			lbl.Position = UDim2.new(0.5, -199, 0, offsetY)
 			lbl.Text = cfg.Text
 			lbl.BackgroundTransparency = 1
-			lbl.TextColor3 = T().SubText
-			lbl.Font = Enum.Font.SourceSansBold
-			lbl.TextSize = 18
-			lbl.TextXAlignment = Enum.TextXAlignment.Left
+			lbl.TextColor3 = GetTheme().Text
 
 			offsetY += 38
-			updateCanvas(Page)
 		end
 
 		-- BOX
@@ -276,17 +279,12 @@ function UI:CreateWindow(cfg)
 			box.Size = UDim2.new(0,398,0,40)
 			box.Position = UDim2.new(0.5, -199, 0, offsetY)
 
-			box.BackgroundColor3 = T().Input
-			box.TextColor3 = T().Text
+			box.BackgroundColor3 = GetTheme().Input
+			box.TextColor3 = GetTheme().Text
 			box.Text = ""
-			box.PlaceholderText = cfg.Name or "Enter here..."
-			box.Font = Enum.Font.SourceSansBold
-			box.TextSize = 18
-
-			Instance.new("UICorner", box)
+			box.PlaceholderText = cfg.Name
 
 			offsetY += 46
-			updateCanvas(Page)
 
 			return box
 		end
@@ -299,14 +297,10 @@ function UI:CreateWindow(cfg)
 			btn.Size = UDim2.new(0,398,0,38)
 			btn.Position = UDim2.new(0.5, -199, 0, offsetY)
 			btn.Text = cfg.Name .. " : OFF"
-			btn.BackgroundColor3 = T().Element
-			btn.TextColor3 = T().Text
-			btn.Font = Enum.Font.SourceSansBold
-			btn.TextSize = 18
-			Instance.new("UICorner", btn)
+			btn.BackgroundColor3 = GetTheme().Element
+			btn.TextColor3 = GetTheme().Text
 
 			offsetY += 44
-			updateCanvas(Page)
 
 			btn.MouseButton1Click:Connect(function()
 				state = not state
@@ -322,30 +316,17 @@ function UI:CreateWindow(cfg)
 			local frame = Instance.new("Frame", Page)
 			frame.Size = UDim2.new(0,398,0,50)
 			frame.Position = UDim2.new(0.5, -199, 0, offsetY)
-			frame.BackgroundColor3 = T().Slider
-			frame.BorderSizePixel = 0
-			Instance.new("UICorner", frame)
-
-			local label = Instance.new("TextLabel", frame)
-			label.Size = UDim2.new(1,0,0,20)
-			label.Text = cfg.Name .. ": " .. value
-			label.BackgroundTransparency = 1
-			label.TextColor3 = T().Text
-			label.Font = Enum.Font.SourceSansBold
-			label.TextSize = 18
-
-			local bar = Instance.new("Frame", frame)
-			bar.Size = UDim2.new(1,-10,0,6)
-			bar.Position = UDim2.new(0,5,1,-12)
-			Instance.new("UICorner", bar)
-
-			local fill = Instance.new("Frame", bar)
-			fill.Size = UDim2.new(0,0,1,0)
-			fill.BackgroundColor3 = Color3.fromRGB(255,255,255)
-			Instance.new("UICorner", fill)
+			frame.BackgroundColor3 = GetTheme().Slider
 
 			offsetY += 56
-			updateCanvas(Page)
+
+			local label = Instance.new("TextLabel", frame)
+			label.Text = cfg.Name .. ": " .. value
+			label.BackgroundTransparency = 1
+			label.TextColor3 = GetTheme().Text
+
+			local bar = Instance.new("Frame", frame)
+			local fill = Instance.new("Frame", bar)
 
 			local dragging = false
 
@@ -361,10 +342,10 @@ function UI:CreateWindow(cfg)
 				local pos = (i.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X
 				pos = math.clamp(pos,0,1)
 
-				fill.Size = UDim2.new(pos,0,1,0)
 				value = math.floor((cfg.Min or 0) + ((cfg.Max or 100) - (cfg.Min or 0)) * pos)
 
 				label.Text = cfg.Name .. ": " .. value
+
 				if cfg.Callback then cfg.Callback(value) end
 			end)
 		end
