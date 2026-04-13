@@ -201,16 +201,14 @@ function UI:CreateWindow(cfg)
 			box.Size = UDim2.new(0,398,0,40)
 			box.Position = UDim2.new(0.5, -199, 0, offsetY)
 
-			box.BackgroundColor3 = Color3.fromRGB(150,0,0) -- CHANGE
+			box.BackgroundColor3 = Color3.fromRGB(150,0,0)
 			box.TextColor3 = Color3.fromRGB(255,255,255)
 			box.Font = Enum.Font.SourceSansBold
 			box.TextSize = 18
 
-			box.TextWrapped = true
-			box.TextXAlignment = Enum.TextXAlignment.Left
-			box.TextYAlignment = Enum.TextYAlignment.Center
 			box.Text = ""
-			box.PlaceholderText = cfg.Name or "Enter here..."
+			box.PlaceholderText = "Enter here..." -- FIXED
+
 			box.BorderSizePixel = 0
 
 			local corner = Instance.new("UICorner", box)
@@ -275,7 +273,7 @@ function UI:CreateWindow(cfg)
 
 			local fill = Instance.new("Frame", bar)
 			fill.Size = UDim2.new(0,0,1,0)
-			fill.BackgroundColor3 = Color3.fromRGB(150,0,0) -- CHANGE
+			fill.BackgroundColor3 = Color3.fromRGB(150,0,0)
 			Instance.new("UICorner", fill)
 
 			offsetY += 56
