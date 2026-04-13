@@ -105,12 +105,15 @@ function UI:CreateWindow(cfg)
 	TabsFrame.BorderSizePixel = 0
 	Instance.new("UICorner", TabsFrame).CornerRadius = UDim.new(0,5)
 
+	-- OPEN BUTTON (FIXED IMAGE FULL FILL)
 	local Open = Instance.new("ImageButton", gui)
 	Open.Size = UDim2.new(0,52,0,42)
 	Open.Position = UDim2.new(0,32,0,16)
-	Open.BackgroundColor3 = Color3.fromRGB(55,55,55)
+	Open.BackgroundTransparency = 1
 	Open.Image = cfg.Icon or ""
-	Open.ScaleType = Enum.ScaleType.Fit
+
+	Open.ScaleType = Enum.ScaleType.Stretch -- FULL FILL FIX
+
 	Instance.new("UICorner", Open).CornerRadius = UDim.new(0,5)
 
 	makeDraggable(Open)
@@ -197,36 +200,32 @@ function UI:CreateWindow(cfg)
 		end
 
 		function Tab:AddBox(cfg)
-	local box = Instance.new("TextBox", Page)
-	box.Size = UDim2.new(0,398,0,40)
-	box.Position = UDim2.new(0.5, -199, 0, offsetY)
+			local box = Instance.new("TextBox", Page)
+			box.Size = UDim2.new(0,398,0,40)
+			box.Position = UDim2.new(0.5, -199, 0, offsetY)
 
-	box.BackgroundColor3 = Color3.fromRGB(150,0,0)
-	box.TextColor3 = Color3.fromRGB(255,255,255)
-	box.Font = Enum.Font.SourceSansBold
-	box.TextSize = 18
+			box.BackgroundColor3 = Color3.fromRGB(150,0,0)
+			box.TextColor3 = Color3.fromRGB(255,255,255)
+			box.Font = Enum.Font.SourceSansBold
+			box.TextSize = 18
 
-	box.Text = ""
-	box.PlaceholderText = "Enter here..."
+			box.Text = ""
+			box.PlaceholderText = "Enter here..."
 
-	box.TextWrapped = true
-	box.TextXAlignment = Enum.TextXAlignment.Left
-	box.TextYAlignment = Enum.TextYAlignment.Center
+			box.TextWrapped = true
+			box.TextXAlignment = Enum.TextXAlignment.Left
+			box.TextYAlignment = Enum.TextYAlignment.Center
 
-	box.BorderSizePixel = 0
+			box.BorderSizePixel = 0
 
-	
-	local corner = Instance.new("UICorner", box)
-	corner.CornerRadius = UDim.new(0,5)
+			local pad2 = Instance.new("UIPadding", box)
+			pad2.PaddingLeft = UDim.new(0,6)
 
-	local pad2 = Instance.new("UIPadding", box)
-	pad2.PaddingLeft = UDim.new(0,6)
+			offsetY += 46
+			updateCanvas(Page)
 
-	offsetY += 46
-	updateCanvas(Page)
-
-	return box
-end
+			return box
+		end
 
 		function Tab:AddToggle(cfg)
 			local state = false
@@ -278,7 +277,7 @@ end
 
 			local fill = Instance.new("Frame", bar)
 			fill.Size = UDim2.new(0,0,1,0)
-			fill.BackgroundColor3 = Color3.fromRGB(150,0,0) -- CHANGE
+			fill.BackgroundColor3 = Color3.fromRGB(150,0,0)
 			Instance.new("UICorner", fill)
 
 			offsetY += 56
