@@ -105,7 +105,6 @@ function UI:CreateWindow(cfg)
 	TabsFrame.BorderSizePixel = 0
 	Instance.new("UICorner", TabsFrame).CornerRadius = UDim.new(0,5)
 
-	-- OPEN BUTTON (IMAGE)
 	local Open = Instance.new("ImageButton", gui)
 	Open.Size = UDim2.new(0,52,0,42)
 	Open.Position = UDim2.new(0,32,0,16)
@@ -202,10 +201,14 @@ function UI:CreateWindow(cfg)
 			box.Size = UDim2.new(0,398,0,40)
 			box.Position = UDim2.new(0.5, -199, 0, offsetY)
 
-			box.BackgroundColor3 = Color3.fromRGB(116,116,116)
+			box.BackgroundColor3 = Color3.fromRGB(150,0,0) -- CHANGE
 			box.TextColor3 = Color3.fromRGB(255,255,255)
 			box.Font = Enum.Font.SourceSansBold
 			box.TextSize = 18
+
+			box.TextWrapped = true
+			box.TextXAlignment = Enum.TextXAlignment.Left
+			box.TextYAlignment = Enum.TextYAlignment.Center
 			box.Text = ""
 			box.PlaceholderText = cfg.Name or "Enter here..."
 			box.BorderSizePixel = 0
@@ -272,7 +275,7 @@ function UI:CreateWindow(cfg)
 
 			local fill = Instance.new("Frame", bar)
 			fill.Size = UDim2.new(0,0,1,0)
-			fill.BackgroundColor3 = Color3.fromRGB(255,255,255)
+			fill.BackgroundColor3 = Color3.fromRGB(150,0,0) -- CHANGE
 			Instance.new("UICorner", fill)
 
 			offsetY += 56
