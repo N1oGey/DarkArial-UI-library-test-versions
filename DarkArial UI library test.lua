@@ -71,7 +71,8 @@ function UI:CreateWindow(cfg)
 	Wind.Size = UDim2.new(0, 536, 0, 320)
 	Wind.Position = UDim2.new(0, 192, 0, 22)
 	Wind.BackgroundColor3 = Color3.fromRGB(35,35,35)
-	Instance.new("UICorner", Wind)
+	Wind.BorderSizePixel = 0
+	Instance.new("UICorner", Wind).CornerRadius = UDim.new(0,5)
 
 	makeDraggable(Wind)
 
@@ -83,7 +84,8 @@ function UI:CreateWindow(cfg)
 	Title.Text = cfg.Title or "Title"
 	Title.Font = Enum.Font.SourceSansBold
 	Title.TextSize = 18
-	Instance.new("UICorner", Title)
+	Title.BorderSizePixel = 0
+	Instance.new("UICorner", Title).CornerRadius = UDim.new(0,5)
 
 	local pad = Instance.new("UIPadding", Title)
 	pad.PaddingLeft = UDim.new(0,7)
@@ -94,13 +96,16 @@ function UI:CreateWindow(cfg)
 	Close.Text = "X"
 	Close.BackgroundTransparency = 1
 	Close.TextColor3 = Color3.fromRGB(255,255,255)
+	Close.Font = Enum.Font.SourceSansBold
+	Close.TextSize = 24
 
 	local TabsFrame = Instance.new("ScrollingFrame", Wind)
 	TabsFrame.Size = UDim2.new(0,108,0,272)
 	TabsFrame.Position = UDim2.new(0,6,0,40)
 	TabsFrame.BackgroundColor3 = Color3.fromRGB(55,55,55)
 	TabsFrame.ScrollBarThickness = 0
-	Instance.new("UICorner", TabsFrame)
+	TabsFrame.BorderSizePixel = 0
+	Instance.new("UICorner", TabsFrame).CornerRadius = UDim.new(0,5)
 
 	local Open = Instance.new("ImageButton", gui)
 	Open.Size = UDim2.new(0,52,0,42)
@@ -108,7 +113,7 @@ function UI:CreateWindow(cfg)
 	Open.BackgroundTransparency = 1
 	Open.Image = cfg.Icon or ""
 	Open.ScaleType = Enum.ScaleType.Stretch
-	Instance.new("UICorner", Open)
+	Instance.new("UICorner", Open).CornerRadius = UDim.new(0,5)
 
 	makeDraggable(Open)
 	Open.Visible = false
@@ -129,30 +134,53 @@ function UI:CreateWindow(cfg)
 		blur.Size = 0
 
 		local sg = Instance.new("ScreenGui", player.PlayerGui)
-		local frame = Instance.new("Frame", sg)
-		frame.Size = UDim2.new(0,400,0,264)
-		frame.Position = UDim2.new(0.5,-200,0.5,-132)
-		frame.BackgroundColor3 = Color3.fromRGB(54,54,54)
-		Instance.new("UICorner", frame)
 
-		local t = Instance.new("TextLabel", frame)
-		t.Size = UDim2.new(0,364,0,40)
-		t.Position = UDim2.new(0,16,0,58)
-		t.Text = cfg.Title or "Title"
-		t.TextColor3 = Color3.new(1,1,1)
-		t.BackgroundTransparency = 1
-		t.Font = Enum.Font.SourceSansBold
-		t.TextSize = 24
+		local preview = Instance.new("Frame", sg)
+		preview.Size = UDim2.new(0, 400, 0, 264)
+		preview.Position = UDim2.new(0.5,-200,0.5,-132)
+		preview.BackgroundColor3 = Color3.fromRGB(54,54,54)
+		Instance.new("UICorner", preview)
 
-		local s = Instance.new("TextLabel", frame)
-		s.Size = UDim2.new(0,364,0,28)
-		s.Position = UDim2.new(0,16,0,96)
-		s.Text = cfg.Subtitle or "Subtitle"
-		s.TextColor3 = Color3.new(1,1,1)
-		s.BackgroundTransparency = 1
+		local title = Instance.new("TextLabel", preview)
+		title.Size = UDim2.new(0,364,0,40)
+		title.Position = UDim2.new(0,16,0,58)
+		title.Text = ""
+		title.TextColor3 = Color3.new(1,1,1)
+		title.BackgroundTransparency = 1
+		title.Font = Enum.Font.SourceSansBold
+		title.TextSize = 24
+
+		local subtitle = Instance.new("TextLabel", preview)
+		subtitle.Size = UDim2.new(0,364,0,28)
+		subtitle.Position = UDim2.new(0,16,0,96)
+		subtitle.Text = ""
+		subtitle.TextColor3 = Color3.new(1,1,1)
+		subtitle.BackgroundTransparency = 1
+
+		local function typeText(label, text)
+			for i = 1, #text do
+				label.Text = string.sub(text,1,i)
+				task.wait(0.03)
+			end
+		end
+
+		local function eraseText(label)
+			for i = #label.Text,0,-1 do
+				label.Text = string.sub(label.Text,1,i)
+				task.wait(0.02)
+			end
+		end
 
 		TweenService:Create(blur,TweenInfo.new(0.3),{Size=20}):Play()
-		task.wait(3)
+
+		typeText(title, cfg.Title or "Title")
+		typeText(subtitle, cfg.Subtitle or "Subtitle")
+
+		task.wait(2)
+
+		eraseText(subtitle)
+		eraseText(title)
+
 		TweenService:Create(blur,TweenInfo.new(0.3),{Size=0}):Play()
 
 		task.wait(0.3)
@@ -166,10 +194,13 @@ function UI:CreateWindow(cfg)
 
 		local Button = Instance.new("TextButton", TabsFrame)
 		Button.Size = UDim2.new(0,90,0,36)
-		Button.Position = UDim2.new(0.5,-45,0,index*42+6)
+		Button.Position = UDim2.new(0.5, -45, 0, index*42 + 6)
 		Button.Text = tabCfg.TabName or "Tab"
 		Button.BackgroundColor3 = Color3.fromRGB(208,0,0)
-		Button.TextColor3 = Color3.new(1,1,1)
+		Button.TextColor3 = Color3.fromRGB(255,255,255)
+		Button.Font = Enum.Font.SourceSansBold
+		Button.TextSize = 18
+		Button.BorderSizePixel = 0
 		Instance.new("UICorner", Button)
 
 		updateCanvas(TabsFrame)
@@ -198,7 +229,6 @@ function UI:CreateWindow(cfg)
 			btn.Position = UDim2.new(0.5,-199,0,offsetY)
 			btn.Text = cfg.Name.." : OFF"
 			btn.BackgroundColor3 = Color3.fromRGB(208,0,0)
-			btn.TextColor3 = Color3.new(1,1,1)
 			Instance.new("UICorner", btn)
 
 			offsetY += 44
