@@ -13,6 +13,7 @@ gui.Parent = player:WaitForChild("PlayerGui")
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 gui.ResetOnSpawn = false
 
+-- DRAG SYSTEM
 local function makeDraggable(obj)
 	local dragging = false
 	local dragInput, startPos, startInputPos
@@ -50,23 +51,11 @@ local function makeDraggable(obj)
 	end)
 end
 
-local function updateCanvas(frame)
-	local maxY = 0
-	for _,v in pairs(frame:GetChildren()) do
-		if v:IsA("GuiObject") then
-			local bottom = v.Position.Y.Offset + v.Size.Y.Offset
-			if bottom > maxY then
-				maxY = bottom
-			end
-		end
-	end
-	frame.CanvasSize = UDim2.new(0,0,0,maxY + 10)
-end
-
 function UI:CreateWindow(cfg)
 	local Window = {}
 	local Tabs = {}
 
+	-- WINDOW
 	local Wind = Instance.new("Frame", gui)
 	Wind.Size = UDim2.new(0, 536, 0, 320)
 	Wind.Position = UDim2.new(0, 192, 0, 22)
@@ -76,48 +65,48 @@ function UI:CreateWindow(cfg)
 
 	makeDraggable(Wind)
 
+	-- TITLE
 	local Title = Instance.new("TextLabel", Wind)
-	Title.Size = UDim2.new(0,536,0,34)
+	Title.Size = UDim2.new(1,0,0,34)
 	Title.BackgroundColor3 = Color3.fromRGB(55,55,55)
 	Title.TextColor3 = Color3.fromRGB(255,255,255)
 	Title.TextXAlignment = Enum.TextXAlignment.Left
 	Title.Text = cfg.Title or "Title"
 	Title.Font = Enum.Font.SourceSansBold
 	Title.TextSize = 18
-	Title.BorderSizePixel = 0
-	Instance.new("UICorner", Title).CornerRadius = UDim.new(0,5)
+	Instance.new("UICorner", Title)
 
 	local pad = Instance.new("UIPadding", Title)
 	pad.PaddingLeft = UDim.new(0,7)
 
+	-- CLOSE
 	local Close = Instance.new("TextButton", Title)
-	Close.Size = UDim2.new(0,24,0,28)
-	Close.Position = UDim2.new(0,498,0,4)
+	Close.Size = UDim2.new(0,24,0,24)
+	Close.Position = UDim2.new(1,-30,0,5)
 	Close.Text = "X"
 	Close.BackgroundTransparency = 1
-	Close.TextColor3 = Color3.fromRGB(255,255,255)
-	Close.Font = Enum.Font.SourceSansBold
-	Close.TextSize = 24
+	Close.TextColor3 = Color3.new(1,1,1)
 
+	-- TABS
 	local TabsFrame = Instance.new("ScrollingFrame", Wind)
 	TabsFrame.Size = UDim2.new(0,108,0,272)
 	TabsFrame.Position = UDim2.new(0,6,0,40)
 	TabsFrame.BackgroundColor3 = Color3.fromRGB(55,55,55)
 	TabsFrame.ScrollBarThickness = 0
 	TabsFrame.BorderSizePixel = 0
-	Instance.new("UICorner", TabsFrame).CornerRadius = UDim.new(0,5)
 
+	-- OPEN BUTTON
 	local Open = Instance.new("ImageButton", gui)
 	Open.Size = UDim2.new(0,52,0,42)
 	Open.Position = UDim2.new(0,32,0,16)
 	Open.BackgroundTransparency = 1
 	Open.Image = cfg.Icon or ""
 	Open.ScaleType = Enum.ScaleType.Stretch
-	Instance.new("UICorner", Open).CornerRadius = UDim.new(0,5)
 
 	makeDraggable(Open)
 	Open.Visible = false
 
+	-- OPEN / CLOSE
 	Close.MouseButton1Click:Connect(function()
 		Wind.Visible = false
 		Open.Visible = true
@@ -128,82 +117,63 @@ function UI:CreateWindow(cfg)
 		Open.Visible = false
 	end)
 
-	-- PREVIEW
+	------------------------------------------------
+	-- PREVIEW FIXED
+	------------------------------------------------
 	function Window:AddPreview(cfg)
-		local blur = Instance.new("BlurEffect", Lighting)
-		blur.Size = 0
+		task.spawn(function()
+			local blur = Instance.new("BlurEffect", Lighting)
+			blur.Size = 0
 
-		local sg = Instance.new("ScreenGui", player.PlayerGui)
+			local sg = Instance.new("ScreenGui", player.PlayerGui)
 
-		local preview = Instance.new("Frame", sg)
-		preview.Size = UDim2.new(0, 400, 0, 264)
-		preview.Position = UDim2.new(0.5,-200,0.5,-132)
-		preview.BackgroundColor3 = Color3.fromRGB(54,54,54)
-		Instance.new("UICorner", preview)
+			local frame = Instance.new("Frame", sg)
+			frame.Size = UDim2.new(0,400,0,264)
+			frame.Position = UDim2.new(0.5,-200,0.5,-132)
+			frame.BackgroundColor3 = Color3.fromRGB(54,54,54)
+			Instance.new("UICorner", frame)
 
-		local title = Instance.new("TextLabel", preview)
-		title.Size = UDim2.new(0,364,0,40)
-		title.Position = UDim2.new(0,16,0,58)
-		title.Text = ""
-		title.TextColor3 = Color3.new(1,1,1)
-		title.BackgroundTransparency = 1
-		title.Font = Enum.Font.SourceSansBold
-		title.TextSize = 24
+			local t = Instance.new("TextLabel", frame)
+			t.Size = UDim2.new(1,0,0,40)
+			t.Position = UDim2.new(0,0,0,60)
+			t.Text = cfg.Title or "Title"
+			t.BackgroundTransparency = 1
+			t.TextColor3 = Color3.new(1,1,1)
+			t.Font = Enum.Font.SourceSansBold
+			t.TextSize = 24
 
-		local subtitle = Instance.new("TextLabel", preview)
-		subtitle.Size = UDim2.new(0,364,0,28)
-		subtitle.Position = UDim2.new(0,16,0,96)
-		subtitle.Text = ""
-		subtitle.TextColor3 = Color3.new(1,1,1)
-		subtitle.BackgroundTransparency = 1
+			local s = Instance.new("TextLabel", frame)
+			s.Size = UDim2.new(1,0,0,30)
+			s.Position = UDim2.new(0,0,0,100)
+			s.Text = cfg.Subtitle or "Subtitle"
+			s.BackgroundTransparency = 1
+			s.TextColor3 = Color3.new(1,1,1)
 
-		local function typeText(label, text)
-			for i = 1, #text do
-				label.Text = string.sub(text,1,i)
-				task.wait(0.03)
-			end
-		end
+			TweenService:Create(blur, TweenInfo.new(0.25), {Size = 20}):Play()
 
-		local function eraseText(label)
-			for i = #label.Text,0,-1 do
-				label.Text = string.sub(label.Text,1,i)
-				task.wait(0.02)
-			end
-		end
+			task.wait(2)
 
-		TweenService:Create(blur,TweenInfo.new(0.3),{Size=20}):Play()
+			TweenService:Create(blur, TweenInfo.new(0.25), {Size = 0}):Play()
 
-		typeText(title, cfg.Title or "Title")
-		typeText(subtitle, cfg.Subtitle or "Subtitle")
+			task.wait(0.3)
 
-		task.wait(2)
-
-		eraseText(subtitle)
-		eraseText(title)
-
-		TweenService:Create(blur,TweenInfo.new(0.3),{Size=0}):Play()
-
-		task.wait(0.3)
-		sg:Destroy()
-		blur:Destroy()
+			sg:Destroy()
+			blur:Destroy()
+		end)
 	end
 
+	------------------------------------------------
+	-- TAB SYSTEM FIXED
+	------------------------------------------------
 	function Window:AddTab(tabCfg)
 		local Tab = {}
 		local index = #Tabs
 
-		local Button = Instance.new("TextButton", TabsFrame)
-		Button.Size = UDim2.new(0,90,0,36)
-		Button.Position = UDim2.new(0.5, -45, 0, index*42 + 6)
-		Button.Text = tabCfg.TabName or "Tab"
-		Button.BackgroundColor3 = Color3.fromRGB(208,0,0)
-		Button.TextColor3 = Color3.fromRGB(255,255,255)
-		Button.Font = Enum.Font.SourceSansBold
-		Button.TextSize = 18
-		Button.BorderSizePixel = 0
-		Instance.new("UICorner", Button)
-
-		updateCanvas(TabsFrame)
+		local Btn = Instance.new("TextButton", TabsFrame)
+		Btn.Size = UDim2.new(1,0,0,36)
+		Btn.Text = tabCfg.TabName or "Tab"
+		Btn.BackgroundColor3 = Color3.fromRGB(208,0,0)
+		Btn.TextColor3 = Color3.new(1,1,1)
 
 		local Page = Instance.new("ScrollingFrame", Wind)
 		Page.Size = UDim2.new(0,410,0,272)
@@ -211,65 +181,129 @@ function UI:CreateWindow(cfg)
 		Page.BackgroundColor3 = Color3.fromRGB(55,55,55)
 		Page.ScrollBarThickness = 0
 		Page.Visible = false
-		Instance.new("UICorner", Page)
 
-		local offsetY = 6
-
-		Button.MouseButton1Click:Connect(function()
+		Btn.MouseButton1Click:Connect(function()
 			for _,v in pairs(Tabs) do
 				v.Page.Visible = false
 			end
 			Page.Visible = true
 		end)
 
+		local y = 6
+
+		------------------------------------------------
+		-- BUTTON
+		------------------------------------------------
+		function Tab:AddButton(cfg)
+			local b = Instance.new("TextButton", Page)
+			b.Size = UDim2.new(0,398,0,38)
+			b.Position = UDim2.new(0,6,0,y)
+			b.Text = cfg.Name or "Button"
+			b.BackgroundColor3 = Color3.fromRGB(208,0,0)
+			b.TextColor3 = Color3.new(1,1,1)
+
+			y += 44
+
+			b.MouseButton1Click:Connect(function()
+				if cfg.Callback then cfg.Callback() end
+			end)
+		end
+
+		------------------------------------------------
+		-- LABEL
+		------------------------------------------------
+		function Tab:AddLabel(cfg)
+			local l = Instance.new("TextLabel", Page)
+			l.Size = UDim2.new(0,398,0,34)
+			l.Position = UDim2.new(0,6,0,y)
+			l.Text = cfg.Text or "Label"
+			l.BackgroundTransparency = 1
+			l.TextColor3 = Color3.new(1,1,1)
+
+			y += 38
+		end
+
+		------------------------------------------------
+		-- BOX
+		------------------------------------------------
+		function Tab:AddBox(cfg)
+			local box = Instance.new("TextBox", Page)
+			box.Size = UDim2.new(0,398,0,40)
+			box.Position = UDim2.new(0,6,0,y)
+			box.PlaceholderText = cfg.Name or "Enter here..."
+			box.BackgroundColor3 = Color3.fromRGB(150,0,0)
+			box.TextColor3 = Color3.new(1,1,1)
+
+			y += 46
+			return box
+		end
+
+		------------------------------------------------
+		-- TOGGLE
+		------------------------------------------------
 		function Tab:AddToggle(cfg)
 			local state = false
-			local btn = Instance.new("TextButton", Page)
-			btn.Size = UDim2.new(0,398,0,38)
-			btn.Position = UDim2.new(0.5,-199,0,offsetY)
-			btn.Text = cfg.Name.." : OFF"
-			btn.BackgroundColor3 = Color3.fromRGB(208,0,0)
-			Instance.new("UICorner", btn)
 
-			offsetY += 44
-			updateCanvas(Page)
+			local b = Instance.new("TextButton", Page)
+			b.Size = UDim2.new(0,398,0,38)
+			b.Position = UDim2.new(0,6,0,y)
+			b.Text = cfg.Name.." : OFF"
+			b.BackgroundColor3 = Color3.fromRGB(208,0,0)
+			b.TextColor3 = Color3.new(1,1,1)
 
-			btn.MouseButton1Click:Connect(function()
+			y += 44
+
+			b.MouseButton1Click:Connect(function()
 				state = not state
-				btn.Text = cfg.Name.." : "..(state and "ON" or "OFF")
+				b.Text = cfg.Name.." : "..(state and "ON" or "OFF")
 				if cfg.Callback then cfg.Callback(state) end
 			end)
 		end
 
+		------------------------------------------------
+		-- SLIDER FIXED
+		------------------------------------------------
 		function Tab:AddSlider(cfg)
 			local value = cfg.Min or 0
 
 			local frame = Instance.new("Frame", Page)
 			frame.Size = UDim2.new(0,398,0,50)
-			frame.Position = UDim2.new(0.5,-199,0,offsetY)
+			frame.Position = UDim2.new(0,6,0,y)
 			frame.BackgroundColor3 = Color3.fromRGB(70,70,70)
-			Instance.new("UICorner", frame)
 
 			local bar = Instance.new("Frame", frame)
 			bar.Size = UDim2.new(1,-10,0,6)
 			bar.Position = UDim2.new(0,5,1,-12)
 			bar.BackgroundColor3 = Color3.fromRGB(100,100,100)
-			Instance.new("UICorner", bar)
 
 			local fill = Instance.new("Frame", bar)
 			fill.Size = UDim2.new(0,0,1,0)
 			fill.BackgroundColor3 = Color3.fromRGB(150,0,0)
-			Instance.new("UICorner", fill)
 
-			offsetY += 56
-			updateCanvas(Page)
+			y += 56
 
-			bar.InputChanged:Connect(function(input)
-				local pos = (input.Position.X - bar.AbsolutePosition.X)/bar.AbsoluteSize.X
+			local dragging = false
+
+			bar.InputBegan:Connect(function(i)
+				if i.UserInputType == Enum.UserInputType.MouseButton1 then
+					dragging = true
+				end
+			end)
+
+			bar.InputEnded:Connect(function()
+				dragging = false
+			end)
+
+			bar.InputChanged:Connect(function(i)
+				if not dragging then return end
+
+				local pos = (i.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X
 				pos = math.clamp(pos,0,1)
+
 				fill.Size = UDim2.new(pos,0,1,0)
 
 				value = math.floor((cfg.Min or 0)+((cfg.Max or 100)-(cfg.Min or 0))*pos)
+
 				if cfg.Callback then cfg.Callback(value) end
 			end)
 		end
