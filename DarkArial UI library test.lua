@@ -65,6 +65,7 @@ end
 function UI:CreateWindow(cfg)
 	local Window = {}
 	local Tabs = {}
+	local previewPlayed = false
 
 	local Wind = Instance.new("Frame", gui)
 	Wind.Size = UDim2.new(0, 536, 0, 320)
@@ -113,7 +114,7 @@ function UI:CreateWindow(cfg)
 	Open.BackgroundTransparency = 1
 	Open.Image = cfg.Icon or ""
 
-	Open.ScaleType = Enum.ScaleType.Stretch -- FULL FILL FIX
+	Open.ScaleType = Enum.ScaleType.Stretch
 
 	Instance.new("UICorner", Open).CornerRadius = UDim.new(0, 5)
 
@@ -131,20 +132,21 @@ function UI:CreateWindow(cfg)
 	end)
 
 	function Window:AddPreview(previewCfg)
-		if self._previewPlayed then
+		if previewPlayed then
 			return
 		end
-		self._previewPlayed = true
+		previewPlayed = true
 
 		previewCfg = previewCfg or {}
 
-		local PreviewGui = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"))
-		PreviewGui.Name = "PreviewGui"
-		PreviewGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-		PreviewGui.ResetOnSpawn = false
-
 		Wind.Visible = false
 		Open.Visible = false
+
+		local PreviewGui = Instance.new("ScreenGui")
+		PreviewGui.Name = "PreviewGui"
+		PreviewGui.Parent = player:WaitForChild("PlayerGui")
+		PreviewGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+		PreviewGui.ResetOnSpawn = false
 
 		local Preview = Instance.new("Frame", PreviewGui)
 		Preview.BorderSizePixel = 0
@@ -288,7 +290,9 @@ function UI:CreateWindow(cfg)
 			updateCanvas(Page)
 
 			btn.MouseButton1Click:Connect(function()
-				if cfg.Callback then cfg.Callback() end
+				if cfg.Callback then
+					cfg.Callback()
+				end
 			end)
 		end
 
@@ -318,13 +322,16 @@ function UI:CreateWindow(cfg)
 			box.TextSize = 18
 
 			box.Text = ""
-			box.PlaceholderText = "Enter here..."
+			box.PlaceholderText = cfg.Placeholder or "Enter here..."
 
 			box.TextWrapped = true
 			box.TextXAlignment = Enum.TextXAlignment.Left
 			box.TextYAlignment = Enum.TextYAlignment.Center
-
+			box.ClearTextOnFocus = false
 			box.BorderSizePixel = 0
+
+			local boxCorner = Instance.new("UICorner", box)
+			boxCorner.CornerRadius = UDim.new(0, 5)
 
 			local pad2 = Instance.new("UIPadding", box)
 			pad2.PaddingLeft = UDim.new(0, 6)
@@ -355,7 +362,9 @@ function UI:CreateWindow(cfg)
 			btn.MouseButton1Click:Connect(function()
 				state = not state
 				btn.Text = cfg.Name .. " : " .. (state and "ON" or "OFF")
-				if cfg.Callback then cfg.Callback(state) end
+				if cfg.Callback then
+					cfg.Callback(state)
+				end
 			end)
 		end
 
@@ -372,7 +381,7 @@ function UI:CreateWindow(cfg)
 			local label = Instance.new("TextLabel", frame)
 			label.Size = UDim2.new(1, 0, 0, 20)
 			label.BackgroundTransparency = 1
-			label.Text = cfg.Name .. ": " .. value
+			label.Text = (cfg.Name or "Slider") .. ": " .. value
 			label.TextColor3 = Color3.fromRGB(255, 255, 255)
 			label.Font = Enum.Font.SourceSansBold
 			label.TextSize = 18
@@ -406,7 +415,9 @@ function UI:CreateWindow(cfg)
 			end)
 
 			bar.InputChanged:Connect(function(input)
-				if not dragging then return end
+				if not dragging then
+					return
+				end
 
 				if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 					local pos = (input.Position.X - bar.AbsolutePosition.X) / bar.AbsoluteSize.X
@@ -416,9 +427,11 @@ function UI:CreateWindow(cfg)
 
 					value = math.floor((cfg.Min or 0) + ((cfg.Max or 100) - (cfg.Min or 0)) * pos)
 
-					label.Text = cfg.Name .. ": " .. value
+					label.Text = (cfg.Name or "Slider") .. ": " .. value
 
-					if cfg.Callback then cfg.Callback(value) end
+					if cfg.Callback then
+						cfg.Callback(value)
+					end
 				end
 			end)
 		end
